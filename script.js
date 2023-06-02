@@ -1,3 +1,5 @@
 'use strict'
 
-console.log("Hello World!");
+function getComputerChoice() {
+    return Math.trunc(Math.random() * 3);
+}
