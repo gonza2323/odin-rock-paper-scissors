@@ -2,15 +2,11 @@
 
 const CHOICES = ["Rock", "Paper", "Scissors"];
 
-function getPlayerChoice(message) {
-    let choiceName, choice;
+let playerScore = 0;
+let computerScore = 0;
 
-    do {
-        choiceName = prompt(message);
-        choice = CHOICES.findIndex(e => e.toLowerCase() === choiceName.toLowerCase());
-    } while (choice === -1)
-    
-    return choice;
+function getPlayerChoice(choiceName) {
+    return CHOICES.findIndex(e => e.toLowerCase() === choiceName.toLowerCase());
 }
 
 function getComputerChoice() {
@@ -36,24 +32,29 @@ function getRoundResultMessage(playerChoice, computerChoice, roundResult) {
     }
 }
 
-function game(noRounds) {
-    let score = 0;
+const buttonsContainer = document.querySelector('.buttons');
+const messageBox = document.querySelector('.message');
+const scoreBoard = document.querySelector('.score');
 
-    for (let i = 0; i < noRounds; i++) {
-        const playerChoice = getPlayerChoice("Rock, paper or scissors?");
-        const computerChoice = getComputerChoice();
+buttonsContainer.addEventListener('click', (e) => {
+    const playerChoice = getPlayerChoice(e.target.textContent);
+    const computerChoice = getComputerChoice();
+    const roundResult = playRound(playerChoice, computerChoice);
 
-        const roundResult = playRound(playerChoice, computerChoice);
-        score += roundResult;
+    playerScore += Math.max(roundResult, 0);
+    computerScore -= Math.min(roundResult, 0);
 
-        console.log(getRoundResultMessage(playerChoice, computerChoice, roundResult), `The current score is: ${score}`);
-    }
+    messageBox.textContent = getRoundResultMessage(playerChoice, computerChoice, roundResult);
+    scoreBoard.textContent = `${playerScore} - ${computerScore}`;
 
-    if (score > 0) {
-        console.log("Player won the game!");
-    } else if (score < 0) {
-        console.log("Computer won the game!");
+    if (playerScore === 5) {
+        messageBox.textContent = "You won the game!";
+    } else if (computerScore === 5) {
+        messageBox.textContent = "You lost the game!";
     } else {
-        console.log("Tie! No one wins!");
+        return;
     }
-}
+
+    playerScore = 0;
+    computerScore = 0;
+});
