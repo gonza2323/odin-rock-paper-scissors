@@ -7,7 +7,7 @@ function getPlayerChoice(message) {
 
     do {
         choiceName = prompt(message);
-        choice = CHOICES.findIndex(e => e.toLowerCase() === choiceName.toLowerCase())
+        choice = CHOICES.findIndex(e => e.toLowerCase() === choiceName.toLowerCase());
     } while (choice === -1)
     
     return choice;
@@ -30,9 +30,9 @@ function getRoundResultMessage(playerChoice, computerChoice, roundResult) {
         case 0:
             return `Both played ${playerChoiceName}! It's a tie!`;
         case 1:
-            return `You Win! ${playerChoiceName} beats ${computerChoiceName}!`
+            return `You Win! ${playerChoiceName} beats ${computerChoiceName}!`;
         case -1:
-            return `You Lose! ${computerChoiceName} beats ${playerChoiceName}!`
+            return `You Lose! ${computerChoiceName} beats ${playerChoiceName}!`;
     }
 }
 
