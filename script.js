@@ -1,17 +1,17 @@
 "use strict";
 
 
-const CHOICES_IDS = {
+const CHOICES_VALUES = {
     "rock": 0,
     "paper": 1,
     "scissors": 2,
-}
-
-const CHOICES_NAMES = ["rock", "paper", "scissors"];
+};
 
 
 function getComputerChoice() {
-    return CHOICES_NAMES[Math.floor(Math.random()*3)];
+    const randomIndex = Math.floor(Math.random()*3);
+    const choices = Object.keys(CHOICES_VALUES);
+    return choices[randomIndex];
 }
 
 
@@ -20,10 +20,10 @@ function getPlayerChoice() {
         let playerInput = prompt("What is your choice, rock, paper or scissors?");
         playerInput = playerInput.trim().toLowerCase();
         
-        if (playerInput in CHOICES_IDS)
+        if (playerInput in CHOICES_VALUES)
             return playerInput;
         else
-        
+
         alert("Invalid choice, try again!");
     }
 }
@@ -33,8 +33,7 @@ function playRound() {
     const playerChoice = getPlayerChoice();
     const computerChoice = getComputerChoice();
 
-    const roundResult = (CHOICES_IDS[playerChoice] - CHOICES_IDS[computerChoice] + 3) % 3;
-    console.log(roundResult);
+    const roundResult = (CHOICES_VALUES[playerChoice] - CHOICES_VALUES[computerChoice] + 3) % 3;
 
     switch (roundResult) {
         case 0:
