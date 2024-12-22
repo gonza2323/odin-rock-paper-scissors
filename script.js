@@ -1,11 +1,26 @@
 "use strict";
 
+const NO_ROUNDS = 5;
+
+const buttonsContainer = document.querySelector(".buttons");
+const promptText = document.querySelector(".prompt");
+const resultText = document.querySelector(".round-result");
+const scoreText = document.querySelector(".score");
+
+const gameFinishEvent = new CustomEvent("game-finish");
 
 const CHOICES_VALUES = {
     "rock": 0,
     "paper": 1,
     "scissors": 2,
 };
+
+let roundNo;
+let playerScore;
+let computerScore;
+
+
+setupStartUpConfig();
 
 
 function getComputerChoice() {
@@ -15,62 +30,67 @@ function getComputerChoice() {
 }
 
 
-function getPlayerChoice() {
-    while (true) {
-        let playerInput = prompt("What is your choice, rock, paper or scissors?");
-        playerInput = playerInput.trim().toLowerCase();
-        
-        if (playerInput in CHOICES_VALUES)
-            return playerInput;
-        else
-
-        alert("Invalid choice, try again!");
-    }
-}
-
-
-function playRound() {
-    const playerChoice = getPlayerChoice();
+function playRound(playerChoice) {
     const computerChoice = getComputerChoice();
 
     const roundResult = (CHOICES_VALUES[playerChoice] - CHOICES_VALUES[computerChoice] + 3) % 3;
 
     switch (roundResult) {
         case 0:
-            console.log(`It's a tie! You both played ${playerChoice}.`);
-            return 0;
+            resultText.textContent = `It's a tie! You both played ${playerChoice}.`;
+            break;
         case 1:
-            console.log(`You win! ${playerChoice} beats ${computerChoice}!`);
-            return 1;
+            resultText.textContent = `You win! ${playerChoice} beats ${computerChoice}!`;
+            playerScore++;
+            break;
         case 2:
-            console.log(`You lose! ${computerChoice} beats ${playerChoice}!`);
-            return -1;
+            resultText.textContent = `You lose! ${computerChoice} beats ${playerChoice}!`;
+            computerScore++;
+            break;
     }
+
+    roundNo++;
+    
+    if (roundNo > NO_ROUNDS) {
+        document.dispatchEvent(gameFinishEvent);
+        return;
+    }
+    
+    promptText.textContent = `Round ${roundNo}/${NO_ROUNDS}. Choose an option`
+    scoreText.textContent = `Player (${playerScore}) - (${computerScore}) Computer`;
 }
 
 
-function playGame() {
-    let playerScore = 0;
-    let computerScore = 0;
-
-    for (let i = 0; i < 5; i++) {
-        const roundResult = playRound();
-        playerScore += Math.max(roundResult, 0);
-        computerScore += Math.max(-roundResult, 0);
-        console.log(`Current score is: Player (${playerScore}) - (${computerScore}) Computer`);
-    }
-
+function onGameFinish() {
     const gameResult = Math.sign(playerScore - computerScore);
 
     switch (gameResult) {
         case 0:
-            console.log(`It's a tie! Player (${playerScore}) - (${computerScore}) Computer`);
+            scoreText.textContent = `It's a tie! Player (${playerScore}) - (${computerScore}) Computer`;
             break;
         case 1:
-            console.log(`You won! Player (${playerScore}) - (${computerScore}) Computer`);
+            scoreText.textContent = `You won! Player (${playerScore}) - (${computerScore}) Computer`;
             break;
         case -1:
-            console.log(`You lost! Player (${playerScore}) - (${computerScore}) Computer`);
+            scoreText.textContent = `You lost! Player (${playerScore}) - (${computerScore}) Computer`;
             break;
     }
+
+    setupStartUpConfig();
 }
+
+function setupStartUpConfig() {
+    playerScore = 0;
+    computerScore = 0;
+    roundNo = 1;
+
+    promptText.textContent = "Choose an option to start a new game";
+}
+
+
+buttonsContainer.addEventListener("click", e => {
+    const playerChoice = e.target.getAttribute("choice");
+    playRound(playerChoice);
+})
+
+document.addEventListener('game-finish', onGameFinish);
